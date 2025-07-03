@@ -1,0 +1,15 @@
+pandas
+numpy
+matplotlib
+seaborn
+plotly
+yfinance
+openpyxl
+scikit-learn
+prophet
+scipy
+jinja2
+yagmail
+schedule
+streamlit
+pytest

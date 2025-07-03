@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.oxy/
+oxy/
+.ipynb_checkpoints/
+data/raw/
+data/exports/
+reports/
