@@ -22,7 +22,13 @@ def fetch_stock_data(ticker: str, start_date: str, end_date: str) -> pd.DataFram
     if df.empty:
         raise ValueError(f"No data returned for ticker '{ticker} in the given date range.")
 
+    # Flatten MultiIndex
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = [col[0] for col in df.columns]
+
+    # Reset index to bring Date into column
     df.reset_index(inplace=True)
+    print("[DEBUG] Flattened columns:", df.columns.tolist())
     return df[['Date', 'Close', 'Volume']]
 
 def simulate_cash_inflow(df: pd.DataFrame) -> pd.DataFrame:
@@ -36,7 +42,11 @@ def simulate_cash_inflow(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: With additional 'CashInflow' column
     """
     df = df.copy()
+    if 'Close' not in df.columns or 'Volume' not in df.columns:
+        raise KeyError("Missing 'Close' or 'Volume' in dataframe to simulate cash inflow.")
+    
     df['CashInflow'] = df['Close'] * df['Volume']
+    
     return df
 
 def save_to_csv(df: pd.DataFrame, output_path: str) -> None:
