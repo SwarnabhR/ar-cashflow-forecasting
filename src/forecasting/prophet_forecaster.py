@@ -43,7 +43,7 @@ def forecast_cash_inflow(df: pd.DataFrame, periods: int = 30) -> tuple:
     
     return forecast, model
 
-def plot_forecast(forecast: pd.DataFrame, df_actual: pd.DataFrame = None,title = "Forecast vs Actual"):
+def plot_forecast_with_aging(forecast: pd.DataFrame, df_actual, aging_df: pd.DataFrame = None,title = "Forecast vs Actual"):
     """
     Plot the forecast with CI and actuals (optional)
 
@@ -52,10 +52,16 @@ def plot_forecast(forecast: pd.DataFrame, df_actual: pd.DataFrame = None,title =
         df_actual (pd.DataFrame, optional): Original data with 'Date' and 'CashInflow'. Defaults to None.
         title (str, optional): Plot title. Defaults to "Forecast vs Actual".
     """
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(14, 7))
+    
+    # Plot actual inflows as bars
+    plt.bar(aging_df['Date'], aging_df['bucket_0_30'], label='0-30d', color= '#4caf50')
+    plt.bar(aging_df['Date'], aging_df['bucket_31_60'], bottom=aging_df['bucket_0_30'], label='31-60d', color='#ff9800')
+    plt.bar(aging_df['Date'], aging_df['bucket_61_90'], bottom=aging_df['bucket_0_30'] + aging_df['bucket_31_60'], label='61-90d', color='#f44336')
+    plt.bar(aging_df['Date'], aging_df['bucket_91_plus'], bottom=aging_df['bucket_0_30'] + aging_df['bucket_31_60'] + aging_df['bucket_61_90'], label='90+ d', color='#9c27b0')
     
     # Forecast prediction
-    plt.plot(forecast['ds'], forecast['yhat'], label='Forecast (yhat)', color='orange')
+    plt.plot(forecast['ds'], forecast['yhat'], label='Forecast (yhat)', color='orange', linewidth=2)
     plt.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='orange', alpha=0.2, label='Confidence Interval')
     
     # Historical actuals
