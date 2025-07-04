@@ -23,6 +23,11 @@ def plot_cash_inflow(df: pd.DataFrame, output_path: str = None):
     plt.figure(figsize=(14, 6))
     sns.lineplot(data=df, x='Date', y='CashInflow', label='Daily Cash Inflow', color='skyblue')
     sns.lineplot(data=df, x='Date', y='Rolling_7d', label='7-Day Rolling Avg', color='orange')
+    
+    # Highlight outliers
+    if 'Outlier_IQR' in df.columns:
+        sns.scatterplot(data=df[df['Outlier_IQR']], x='Date', y='CashInflow', color='red', label='Outlier (IQR)', s=50, markers='X')
+    
     plt.title("Daily Cash Inflow with Rolling Average")
     plt.xlabel("Date")
     plt.ylabel("Cash Inflow (Close x Volume)")
