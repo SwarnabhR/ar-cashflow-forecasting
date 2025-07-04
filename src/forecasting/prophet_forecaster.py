@@ -43,27 +43,30 @@ def forecast_cash_inflow(df: pd.DataFrame, periods: int = 30) -> tuple:
     
     return forecast, model
 
-def plot_forecast(model, forecast, original_df=None, title="Cash Inflow Forecast"):
+def plot_forecast(forecast: pd.DataFrame, df_actual: pd.DataFrame = None,title = "Forecast vs Actual"):
     """
-    Plot forecast using Prophet.
-    If original_df is provided, plot it alongside forecast.
+    Plot the forecast with CI and actuals (optional)
 
     Args:
-        model (object): Trained Prophet model
-        forecast (pd.DataFrame): Actual prediction result
-        original_df (pd.DataFrame, optional): Original DataFrame. Defaults to None.
-        title (str, optional): Title of the plot. Defaults to "Cash Inflow Forecast".
+        forecast (pd.DataFrame): Output from Prophet's predict()
+        df_actual (pd.DataFrame, optional): Original data with 'Date' and 'CashInflow'. Defaults to None.
+        title (str, optional): Plot title. Defaults to "Forecast vs Actual".
     """
+    plt.figure(figsize=(12, 6))
     
-    fig = model.plot(forecast)
-    plt.title(title)
+    # Forecast prediction
+    plt.plot(forecast['ds'], forecast['yhat'], label='Forecast (yhat)', color='orange')
+    plt.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='orange', alpha=0.2, label='Confidence Interval')
     
-    if original_df is not None:
-        plt.plot(original_df['Date'], original_df['CashInflow'], 'k.', alpha=0.4, label='Actuals')
-        plt.legend()
+    # Historical actuals
+    if df_actual is not None:
+        plt.plot(df_actual['Date'], df_actual['CashInflow'], label='Actual Inflow', color='blue')
     
+    # Basics
     plt.xlabel("Date")
     plt.ylabel("Cash Inflow")
+    plt.title(title)
+    plt.legend()
     plt.grid(True)
     plt.tight_layout()
     plt.show()
